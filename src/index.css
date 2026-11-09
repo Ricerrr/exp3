@@ -4,55 +4,22 @@
 
 html, body, #root { height: 100%; }
 body {
-  @apply bg-ink-50 text-ink-900 font-sans antialiased;
-  font-feature-settings: "palt";
+  @apply bg-white text-gray-900;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ============ 编辑风排版 ============ */
-.prose-editorial {
-  @apply text-ink-800 leading-8;
-}
-.prose-editorial h1 {
-  @apply font-serif font-black text-3xl mt-10 mb-6 tracking-tight;
-  letter-spacing: -0.02em;
-}
-.prose-editorial h2 {
-  @apply font-serif font-bold text-2xl mt-8 mb-4 border-b border-ink-200 pb-2;
-}
-.prose-editorial h3 {
-  @apply font-serif font-semibold text-xl mt-6 mb-3;
-}
-.prose-editorial p {
-  @apply my-4;
-  text-indent: 2em;
-}
-.prose-editorial ul { @apply list-disc pl-8 my-4; text-indent: 0; }
-.prose-editorial ol { @apply list-decimal pl-8 my-4; text-indent: 0; }
-.prose-editorial li { @apply my-1; text-indent: 0; }
-.prose-editorial code {
-  @apply bg-ink-100 text-ink-900 px-1.5 py-0.5 rounded font-mono text-sm border border-ink-200;
-}
-.prose-editorial pre {
-  @apply bg-ink-950 text-ink-100 p-5 rounded my-5 overflow-x-auto;
-}
-.prose-editorial pre code {
-  @apply bg-transparent border-0 text-ink-100 p-0;
-}
-.prose-editorial blockquote {
-  @apply border-l-4 border-ink-900 pl-6 my-6 italic text-ink-600;
-}
-.prose-editorial a {
-  @apply text-ink-900 underline underline-offset-4 decoration-1 hover:decoration-2;
-}
-.prose-editorial hr {
-  @apply my-10 border-ink-300;
-}
-
-/* ============ 滚动条 ============ */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { @apply bg-ink-300 rounded; }
-::-webkit-scrollbar-thumb:hover { @apply bg-ink-400; }
-
-/* ============ 选中色 ============ */
-::selection { @apply bg-ink-900 text-ink-50; }
+/* Markdown 渲染 */
+.prose-blog h1 { @apply text-2xl font-bold mt-6 mb-3; }
+.prose-blog h2 { @apply text-xl font-bold mt-5 mb-2; }
+.prose-blog h3 { @apply text-lg font-semibold mt-4 mb-2; }
+.prose-blog p  { @apply my-3 leading-7; }
+.prose-blog ul { @apply list-disc pl-6 my-3; }
+.prose-blog ol { @apply list-decimal pl-6 my-3; }
+.prose-blog code { @apply bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded text-sm font-mono; }
+.prose-blog pre  { @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4; }
+.prose-blog pre code { @apply bg-transparent text-gray-100 p-0; }
+.prose-blog blockquote { @apply border-l-4 border-gray-300 pl-4 text-gray-600 italic my-3; }
+.prose-blog a { @apply text-blue-600 hover:underline; }
+.prose-blog table { @apply w-full my-3 text-sm; }
+.prose-blog th, .prose-blog td { @apply border border-gray-200 px-3 py-1.5 text-left; }
+.prose-blog hr { @apply my-6 border-gray-200; }

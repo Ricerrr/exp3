@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { marked } from 'marked'
-import { ArrowLeft, Eye, Heart, MessageCircle, Trash2 } from 'lucide-react'
+import { Eye, Heart, MessageCircle, Trash2 } from 'lucide-react'
 import { useBlogStore } from '../store/blogStore.js'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -15,7 +15,6 @@ export default function Article() {
   const article = articles.find((a) => String(a.id) === id)
   const articleComments = comments[article?.id] || []
 
-  // 首次访问 +1 浏览量
   useEffect(() => {
     if (article && !sessionStorage.getItem(`viewed-${article.id}`)) {
       incrementViews(article.id)
@@ -26,12 +25,7 @@ export default function Article() {
   const html = useMemo(() => (article ? marked.parse(article.content) : ''), [article])
 
   if (!article) {
-    return (
-      <div className="text-center py-24">
-        <p className="text-ink-500 mb-6">文章不存在或已被删除</p>
-        <Link to="/" className="underline underline-offset-4">← 返回首页</Link>
-      </div>
-    )
+    return <p>文章不存在</p>
   }
 
   const liked = article.likedBy?.includes(user?.username)
@@ -44,104 +38,83 @@ export default function Article() {
   }
 
   const handleDelete = () => {
-    if (!confirm('确定要删除这篇文章吗？此操作不可恢复。')) return
+    if (!confirm('确定要删除这篇文章吗？')) return
     deleteArticle(article.id)
     navigate('/', { replace: true })
   }
 
   return (
-    <article className="max-w-3xl mx-auto">
-      {/* 面包屑 */}
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-xs text-ink-500 hover:text-ink-900 mb-8 tracking-wide">
-        <ArrowLeft size={12} /> 返回索引
-      </button>
+    <article className="space-y-4">
+      <h1 className="text-3xl font-bold">{article.title}</h1>
 
-      {/* 标题区 */}
-      <header className="mb-10">
-        <div className="text-xs tracking-[0.3em] uppercase text-ink-500 mb-4">
-          {article.category} · {article.createdAt}
-        </div>
-        <h1 className="font-serif font-black text-4xl md:text-5xl leading-tight tracking-tight mb-6">
-          {article.title}
-        </h1>
-        <div className="flex items-center gap-4 text-sm text-ink-500 border-b border-ink-200 pb-6">
-          <span className="font-medium">{article.author}</span>
-          <span className="opacity-30">·</span>
-          <span className="flex items-center gap-1"><Eye size={13} /> {article.views || 0} 阅读</span>
-          <span className="opacity-30">·</span>
-          {article.tags?.map((t) => (
-            <span key={t} className="text-xs">#{t}</span>
-          ))}
-        </div>
-      </header>
-
-      {/* 正文 */}
-      <div className="prose-editorial dark:text-ink-200" dangerouslySetInnerHTML={{ __html: html }} />
-
-      {/* 互动栏 */}
-      <div className="mt-12 pt-8 border-t border-ink-200 flex items-center justify-between">
-        <button
-          onClick={() => toggleLike(article.id)}
-          className={`flex items-center gap-2 px-5 py-2 border text-sm tracking-wide transition ${
-            liked ? 'border-ink-900 bg-ink-900 text-ink-50' : 'border-ink-300 hover:border-ink-900'
-          }`}
-        >
-          <Heart size={14} fill={liked ? 'currentColor' : 'none'} /> {article.likes || 0}
-        </button>
-
-        {user?.username === article.author && (
-          <button
-            onClick={handleDelete}
-            className="flex items-center gap-1.5 text-xs text-ink-400 hover:text-red-600"
-          >
-            <Trash2 size={13} /> 删除本文
-          </button>
-        )}
-
-        <div className="flex items-center gap-1 text-ink-500 text-sm">
-          <MessageCircle size={13} /> {articleComments.length} 评论
-        </div>
+      {/* 时间、分类、阅读量 */}
+      <div className="text-gray-500 text-sm flex items-center border-b pb-4">
+        <span>{article.publishedAt} | 分类：{article.category}</span>
+        <span className="ml-4 flex items-center gap-1">
+          <Eye size={13} /> {article.views || 0} 阅读
+        </span>
       </div>
 
+      {/* 正文 */}
+      <div className="prose-blog mt-4" dangerouslySetInnerHTML={{ __html: html }} />
+
+      {/* 点赞 */}
+      <button
+        onClick={() => toggleLike(article.id)}
+        className={`flex items-center gap-2 mt-4 px-4 py-2 rounded ${
+          liked ? 'bg-pink-100 text-pink-600 border border-pink-200' : 'border border-gray-200 hover:bg-gray-50'
+        }`}
+      >
+        <Heart size={16} fill={liked ? 'currentColor' : 'none'} /> 点赞 {article.likes || 0}
+      </button>
+
       {/* 评论区 */}
-      <section className="mt-12">
-        <h2 className="font-serif font-bold text-xl mb-6 border-b-2 border-ink-900 pb-2 inline-block">
-          评 论
-        </h2>
+      <div className="pt-8 mt-8 border-t border-gray-200">
+        <h3 className="text-xl font-bold mb-4">评论 ({articleComments.length})</h3>
 
-        {/* 发表 */}
-        <div className="border border-ink-200 p-5 mb-8">
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            rows={3}
-            placeholder={user ? '说点什么...' : '登录后才能参与评论'}
-            className="w-full bg-transparent resize-none focus:outline-none text-base leading-relaxed placeholder:text-ink-300"
-          />
-          <div className="flex justify-end mt-3">
-            <button
-              onClick={handleComment}
-              className="px-5 py-1.5 bg-ink-900 text-ink-50 text-sm tracking-wide hover:opacity-90"
-            >发 表</button>
-          </div>
-        </div>
-
-        {/* 列表 */}
-        <ul className="space-y-4">
+        <ul className="space-y-3 mb-6">
           {articleComments.length === 0 && (
-            <li className="text-center text-ink-400 py-10 text-sm">还没有评论，来说两句吧</li>
+            <p className="text-gray-400 text-sm">还没有评论，来说两句吧。</p>
           )}
           {articleComments.map((c) => (
-            <li key={c.id} className="border-l-2 border-ink-900 pl-5 py-2">
-              <div className="flex items-center gap-2 text-xs text-ink-500 mb-1">
-                <span className="font-semibold text-ink-900">{c.username}</span>
-                <span>{c.createdAt}</span>
+            <li key={c.id} className="bg-gray-50 p-3 rounded border border-gray-100">
+              <div className="text-sm font-bold text-blue-600">
+                {c.username}
+                <span className="text-gray-400 font-normal ml-2">{c.createdAt}</span>
               </div>
-              <p className="text-ink-700 text-base">{c.content}</p>
+              <p className="mt-1 text-gray-800">{c.content}</p>
             </li>
           ))}
         </ul>
-      </section>
+
+        {/* 发表评论 */}
+        <div className="space-y-2 max-w-md">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder={user ? '写下你的评论...' : '登录后才能评论'}
+            rows={3}
+            className="border p-2 w-full rounded h-20"
+          />
+          <button
+            onClick={handleComment}
+            className="bg-green-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-green-700"
+          >发表评论</button>
+        </div>
+      </div>
+
+      {/* 删除按钮 */}
+      {user?.username === article.author && (
+        <div className="pt-8 mt-8 border-t border-red-100">
+          <button onClick={handleDelete} className="flex items-center gap-1 text-red-600 cursor-pointer hover:underline text-sm">
+            <Trash2 size={13} /> 删除本文
+          </button>
+        </div>
+      )}
+
+      <div className="pt-4">
+        <Link to="/" className="text-blue-600 text-sm hover:underline">← 返回首页</Link>
+      </div>
     </article>
   )
 }

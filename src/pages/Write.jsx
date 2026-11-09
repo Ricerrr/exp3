@@ -23,10 +23,8 @@ export default function Write() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-ink-500 mb-6">请先登录再撰稿</p>
-        <button onClick={() => navigate('/login')} className="border border-ink-900 px-6 py-2 tracking-wider hover:bg-ink-900 hover:text-ink-50">
-          去登录
-        </button>
+        <p className="text-gray-500 mb-4">请先登录再写文章</p>
+        <button onClick={() => navigate('/login')} className="border px-4 py-2 rounded hover:bg-gray-50">去登录</button>
       </div>
     )
   }
@@ -46,68 +44,56 @@ export default function Write() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
-      <h1 className="font-serif font-black text-3xl tracking-tight border-b-2 border-ink-900 pb-3">
-        撰 稿
-      </h1>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4">写新文章</h1>
 
-      <div className="space-y-6">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="标题"
-          className="w-full font-serif font-bold text-3xl bg-transparent border-b-2 border-ink-200 focus:border-ink-900 py-3 focus:outline-none tracking-tight"
-        />
-        <div className="grid grid-cols-2 gap-6">
-          <input
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            placeholder="摘要（可选）"
-            className="w-full border-b border-ink-300 focus:border-ink-900 bg-transparent py-2 focus:outline-none text-sm"
-          />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full border-b border-ink-300 focus:border-ink-900 bg-transparent py-2 focus:outline-none text-sm"
-          >
-            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="文章标题"
+        className="w-full border p-2 rounded text-lg font-semibold"
+      />
+      <input
+        value={summary}
+        onChange={(e) => setSummary(e.target.value)}
+        placeholder="摘要（可选）"
+        className="w-full border p-2 rounded"
+      />
+      <div className="flex gap-2">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="border p-2 rounded">
+          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
         <input
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-          placeholder="标签，逗号分隔"
-          className="w-full border-b border-ink-300 focus:border-ink-900 bg-transparent py-2 focus:outline-none text-sm"
+          placeholder="标签（逗号分隔）"
+          className="flex-1 border p-2 rounded"
         />
       </div>
 
       {/* 编辑器 */}
-      <div className="border border-ink-300">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-ink-300 bg-ink-100 text-xs tracking-wider">
-          <span>MARKDOWN</span>
-          <button type="button" onClick={() => setPreview(!preview)} className="flex items-center gap-1 hover:opacity-60">
+      <div className="border rounded overflow-hidden">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b text-sm">
+          <span className="text-gray-500">Markdown 编辑器</span>
+          <button type="button" onClick={() => setPreview(!preview)} className="flex items-center gap-1 text-blue-600 hover:underline">
             {preview ? <EyeOff size={13} /> : <Eye size={13} />} {preview ? '编辑' : '预览'}
           </button>
         </div>
         {preview ? (
-          <div className="prose-editorial p-6 min-h-[300px]" dangerouslySetInnerHTML={{ __html: marked.parse(content) }} />
+          <div className="prose-blog p-4 min-h-[300px]" dangerouslySetInnerHTML={{ __html: marked.parse(content) }} />
         ) : (
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={16}
-            className="w-full p-6 bg-transparent resize-none focus:outline-none font-mono text-sm leading-7"
+            rows={14}
+            className="w-full p-4 resize-none focus:outline-none font-mono text-sm"
           />
         )}
       </div>
 
-      <div className="flex justify-end gap-4">
-        <button type="button" onClick={() => navigate(-1)} className="px-6 py-2 border border-ink-300 hover:border-ink-900 text-sm tracking-wider">
-          取 消
-        </button>
-        <button type="submit" className="px-8 py-2 bg-ink-900 text-ink-50 text-sm tracking-wider hover:opacity-90">
-          发 布
-        </button>
+      <div className="flex gap-3">
+        <button type="button" onClick={() => navigate(-1)} className="border px-4 py-2 rounded hover:bg-gray-50">取消</button>
+        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">发布文章</button>
       </div>
     </form>
   )

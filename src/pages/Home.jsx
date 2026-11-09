@@ -12,7 +12,7 @@ export default function Home() {
   const filtered = useMemo(() => {
     return articles.filter((a) => {
       const matchCat = category === '全部' || a.category === category
-      const matchKw = !keyword || a.title.includes(keyword) || a.summary.includes(keyword)
+      const matchKw = !keyword || a.title.includes(keyword)
       return matchCat && matchKw
     })
   }, [articles, category, keyword])
@@ -22,79 +22,57 @@ export default function Home() {
   const start = (currentPage - 1) * PAGE_SIZE
   const pageArticles = filtered.slice(start, start + PAGE_SIZE)
 
-  const handleSearch = () => setPage(1)
-
   return (
     <div>
+      <h1 className="text-2xl font-bold mb-4">我的博客</h1>
+
       {/* 分类标签栏 */}
-      <div className="flex items-center gap-2 mb-10 flex-wrap">
+      <div className="flex gap-2 mb-4">
         {ALL_CATEGORIES.map((c) => (
           <button
             key={c}
             onClick={() => { setCategory(c); setPage(1) }}
-            className={`px-4 py-1.5 text-sm tracking-wider border ${
-              category === c
-                ? 'bg-ink-900 text-ink-50 border-ink-900'
-                : 'border-ink-300 text-ink-600 hover:border-ink-900'
+            className={`px-3 py-1 rounded border cursor-pointer ${
+              category === c ? 'bg-blue-600 text-white' : 'bg-white'
             }`}
-          >
-            {c}
-          </button>
+          >{c}</button>
         ))}
-        <div className="flex-1" />
-        {/* 搜索框 */}
-        <div className="flex items-center gap-2">
-          <input
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="搜索标题..."
-            className="border-b border-ink-300 bg-transparent focus:outline-none focus:border-ink-900 px-2 py-1 text-sm w-40"
-          />
-        </div>
       </div>
 
+      {/* 搜索框 */}
+      <form
+        onSubmit={(e) => { e.preventDefault(); setPage(1) }}
+        className="mb-6 flex gap-2"
+      >
+        <input
+          name="q"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="搜索文章标题..."
+          className="border p-2 rounded w-64"
+        />
+        <input type="hidden" name="category" value={category} />
+        <button type="submit" className="bg-gray-800 text-white px-4 py-2 rounded cursor-pointer">搜索</button>
+      </form>
+
       {/* 文章列表 */}
-      <div className="space-y-12">
-        {pageArticles.length === 0 ? (
-          <p className="text-center text-ink-400 py-20">没有找到相关文章</p>
-        ) : (
-          pageArticles.map((a, i) => (
-            <div key={a.id}>
-              <ArticleCard article={a} rank={start + i + 1} />
-              {i < pageArticles.length - 1 && (
-                <hr className="mt-12 border-ink-200" />
-              )}
-            </div>
-          ))
-        )}
-      </div>
+      <ul className="space-y-3 min-h-[300px]">
+        {pageArticles.length === 0 && <p className="text-gray-500">没有找到相关文章。</p>}
+        {pageArticles.map((a) => <ArticleCard key={a.id} article={a} />)}
+      </ul>
 
       {/* 分页 */}
       {filtered.length > PAGE_SIZE && (
-        <div className="mt-16 flex items-center justify-center gap-8 text-sm border-t border-ink-200 pt-8">
-          <button
-            disabled={currentPage <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="hover:underline disabled:opacity-30 disabled:no-underline"
-          >← 上一页</button>
-
-          <span className="text-ink-500 tracking-wider">
-            第 <span className="text-ink-900 font-bold">{currentPage}</span> / {totalPages} 页
-          </span>
-
-          <button
-            disabled={currentPage >= totalPages}
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="hover:underline disabled:opacity-30 disabled:no-underline"
-          >下一页 →</button>
+        <div className="flex gap-2 mt-6 items-center">
+          {currentPage > 1 && (
+            <button onClick={() => setPage(currentPage - 1)} className="border px-3 py-1 rounded">上一页</button>
+          )}
+          <span className="px-3 py-1 text-gray-600">第 {currentPage} / {totalPages} 页</span>
+          {currentPage < totalPages && (
+            <button onClick={() => setPage(currentPage + 1)} className="border px-3 py-1 rounded">下一页</button>
+          )}
         </div>
       )}
-
-      {/* 统计 */}
-      <div className="mt-8 text-center text-xs text-ink-400 tracking-wider">
-        共 {filtered.length} 篇文章
-      </div>
     </div>
   )
 }
