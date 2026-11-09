@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-ink-50 text-ink-900 font-sans antialiased;
+  font-feature-settings: "palt";
+}
+
+/* ============ 编辑风排版 ============ */
+.prose-editorial {
+  @apply text-ink-800 leading-8;
+}
+.prose-editorial h1 {
+  @apply font-serif font-black text-3xl mt-10 mb-6 tracking-tight;
+  letter-spacing: -0.02em;
+}
+.prose-editorial h2 {
+  @apply font-serif font-bold text-2xl mt-8 mb-4 border-b border-ink-200 pb-2;
+}
+.prose-editorial h3 {
+  @apply font-serif font-semibold text-xl mt-6 mb-3;
+}
+.prose-editorial p {
+  @apply my-4;
+  text-indent: 2em;
+}
+.prose-editorial ul { @apply list-disc pl-8 my-4; text-indent: 0; }
+.prose-editorial ol { @apply list-decimal pl-8 my-4; text-indent: 0; }
+.prose-editorial li { @apply my-1; text-indent: 0; }
+.prose-editorial code {
+  @apply bg-ink-100 text-ink-900 px-1.5 py-0.5 rounded font-mono text-sm border border-ink-200;
+}
+.prose-editorial pre {
+  @apply bg-ink-950 text-ink-100 p-5 rounded my-5 overflow-x-auto;
+}
+.prose-editorial pre code {
+  @apply bg-transparent border-0 text-ink-100 p-0;
+}
+.prose-editorial blockquote {
+  @apply border-l-4 border-ink-900 pl-6 my-6 italic text-ink-600;
+}
+.prose-editorial a {
+  @apply text-ink-900 underline underline-offset-4 decoration-1 hover:decoration-2;
+}
+.prose-editorial hr {
+  @apply my-10 border-ink-300;
+}
+
+/* ============ 滚动条 ============ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-ink-300 rounded; }
+::-webkit-scrollbar-thumb:hover { @apply bg-ink-400; }
+
+/* ============ 选中色 ============ */
+::selection { @apply bg-ink-900 text-ink-50; }
